@@ -5,3 +5,5 @@ pip install --upgrade azureml-sdk
 pip install -r requirements.txt
 pip install numpy
 pip install matplotlib
+pip install scikit-learn
+pip install pandas
