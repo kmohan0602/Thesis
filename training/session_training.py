@@ -134,7 +134,7 @@ def session_train_process():
     model_multi_input_saved = model_multi_input_saved.float()
     
     ## load model
-    temp_file_path = "../outputs/FSLL_march2_pretrain_set_9_10_11_finetune_rw1.pkl"
+    temp_file_path = "../download_models/FSLL_march2_pretrain_set_9_10_11_finetune_rw1.pkl"
     model_multi_input_saved = torch.load(temp_file_path, map_location = torch.device(device))
 
     session_training(model_multi_input_saved, 20, device, 
