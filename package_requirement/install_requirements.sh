@@ -7,3 +7,4 @@ pip install numpy
 pip install matplotlib
 pip install scikit-learn
 pip install pandas
+pip install azureml-core
