@@ -18,7 +18,7 @@ from azureml.core import Workspace, Dataset, Datastore
 ## import Classes
 from classes import CustomDataset, AlexNet_multi_input
 from train_lib import generate_avg_soh_values, generate_filename_soh_pair, train
-from train_lib import session_training
+from train_lib import session_training, session_generate_filename_soh_pair
 
 # dir(models)
 from PIL import Image
@@ -97,12 +97,15 @@ def main():
     print('Data Download Complete')
 
     ## call session train process
-    # session_train_process()
+    session_train_process()
+    print('training complete')
 
     ## register model
+    ## save model in training model directory
+    
 
     ## delete all files from the container
-    
+
 
 def session_data_init():
     workspace = Workspace(azureconfig.subscription_id, 
@@ -115,23 +118,30 @@ def session_data_init():
     # dataset = Dataset.get_by_name(workspace,
                                     # name = azureconfig.session_datasetname)
     # print('i am here')
-    session_dataset.download(target_path = './ForSession/', overwrite=True)
+    session_dataset.download(target_path = './', overwrite=True)
 
 def session_train_process():
 
-    generate_filename_soh_pair(config.bat_names)
-    generate_filename_soh_pair(config.session_bat_names,
-                                config.base_path + 'ToAzure/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
+    # generate_avg_soh_values(config.session_bat_names)
+    session_generate_filename_soh_pair(config.session_bat_names,
+                                config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
 
-    session_data = SessionDataset(config.base_path + 'ToAzure/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
+    session_data = SessionDataset(config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',0,config.transform)
 
     session_dataloader = DataLoader(session_data, batch_size=32, shuffle=False)
 
     model_multi_input_saved = AlexNet_multi_input()
     model_multi_input_saved = model_multi_input_saved.float()
+    
+    ## load model
+    temp_file_path = "../outputs/FSLL_march2_pretrain_set_9_10_11_finetune_rw1.pkl"
+    model_multi_input_saved = torch.load(temp_file_path, map_location = torch.device(device))
 
     session_training(model_multi_input_saved, 20, device, 
-                    session_dataloader, learning_rate = 0.0001)
+                    session_dataloader, learning_rate = 0.0001, hyperparameter = 20)
+
+    file_path = "../trained_models/FSLL_march2_pretrain_set_9_10_11_finetune_rw1.pkl"
+    torch.save(model_multi_input_saved, file_path)
     
 
 if __name__ == '__main__':
