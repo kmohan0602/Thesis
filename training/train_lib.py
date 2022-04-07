@@ -153,6 +153,62 @@ def session_generate_filename_soh_pair(bat_names, output_path):
     file_soh_df.to_csv(output_path)
 
 
+def predict_generate_filename_soh_pair(bat_names, output_path):
+    voltage_filenames = []
+    current_filenames = []
+    temperature_filenames = []
+    soh_values_toexcel = []
+
+    # for x in bat_names:
+    # soh_file_path = base_path+'../Preprocessing/soh_values_oct12/soh_values_'+x+'.csv'
+    # soh_file_path = config.base_path+'../data/soh_values_oct12/soh_values_'+x+'.csv'
+    soh_file_path = config.test_base_path+'ForSessionTraining/soh_values_oct12/soh_values_'+bat_names+'.csv'
+
+    soh_values = pd.read_csv(soh_file_path)
+    print('len of soh values -- ', bat_names,' ----', len(soh_values))
+
+    length = len(soh_values)
+
+    test =[]
+    voltage_temp_filenames = []
+    current_temp_filenames = []
+    temperature_temp_filenames = []
+    temp_soh_values = []
+
+    count = 0
+    # soh_avg_file = config.base_path+'../data/subset_image_files_oct12_20cycles/'+x+'/soh_values_avg_'+x+'.csv'
+    soh_avg_file = config.test_base_path+'ForSessionTraining/subset_image_files_oct12_20cycles/'+bat_names+'/soh_values_avg_'+bat_names+'.csv'
+    soh_avg = pd.read_csv(soh_avg_file)
+
+    for i in range(0,length,20):
+        l = i
+        r=i+20
+        # voltage_temp_filenames.append(config.base_path+'../data/subset_image_files_oct12_20cycles/'+x+'/wavelet_images/'+x+'_'+str(l)+'_'+str(r)+'_voltage.png')
+        # current_temp_filenames.append(config.base_path+'../data/subset_image_files_oct12_20cycles/'+x+'/wavelet_images/'+x+'_'+str(l)+'_'+str(r)+'_current.png')
+        # # temperature_temp_filenames.append(base_path+'../data/subset_image_files_oct12_20cycles/'+x+'/wavelet_images/'+x+'_'+str(l)+'_'+str(r)+'_temp.png')
+        voltage_temp_filenames.append(config.test_base_path+'ForSessionTraining/subset_image_files_oct12_20cycles/'+bat_names+'/wavelet_images/'+bat_names+'_'+str(l)+'_'+str(r)+'_voltage.png')
+        current_temp_filenames.append(config.test_base_path+'ForSessionTraining/subset_image_files_oct12_20cycles/'+bat_names+'/wavelet_images/'+bat_names+'_'+str(l)+'_'+str(r)+'_current.png')
+        # temperature_temp_filenames.append(base_path+'../data/subset_image_files_oct12_20cycles/'+x+'/wavelet_images/'+x+'_'+str(l)+'_'+str(r)+'_temp.png')
+        temp_soh_values.append(soh_avg.loc[count, '0'])
+        count += 1
+    print(bat_names)    
+    print(len(voltage_temp_filenames))
+    print(len(current_temp_filenames))
+    # print(len(temperature_temp_filenames))
+    print(len(temp_soh_values))
+
+    voltage_filenames.extend(voltage_temp_filenames[:-1])
+    current_filenames.extend(current_temp_filenames[:-1])
+    # temperature_filenames.extend(temperature_temp_filenames[:-1])
+    soh_values_toexcel.extend(temp_soh_values[:-1])
+
+
+    print(len(voltage_filenames))
+
+    file_soh_dict = {'voltage_filenames':voltage_filenames, 'current_filenames':current_filenames, 'soh_values':soh_values_toexcel}
+    file_soh_df = pd.DataFrame(file_soh_dict)
+    file_soh_df.to_csv(output_path)
+
 
 def train(model, num_epochs, learning_rate, device, dataloader):
     

@@ -1,6 +1,7 @@
 from torchvision import transforms
 
 base_path = './'
+test_base_path = './../training/'
 train_batch_size = 64
 
 bat_names = [

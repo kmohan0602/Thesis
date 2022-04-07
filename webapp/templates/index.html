@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Predict Profit of The StartUp </title>
+    <title>Battery Digital Twin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -29,13 +29,14 @@
     <link href="../static/css/style.css" rel="stylesheet">
     
     </head>
+
 <body>
-    <p>Hello world</p>
+    <!-- <p>Hello world</p> -->
     
     <!--==========================
     Top Bar
     ============================-->
-    <section id="topbar" class="d-none d-lg-block">
+    <!-- <section id="topbar" class="d-none d-lg-block">
     <div class="container clearfix">
         <div class="contact-info float-left">
         <i class="fa fa-envelope-o"></i> <a target="_blank" href="mailto:kumartharun435@gmail.com"> kumartharun435@gmail.com</a>
@@ -49,8 +50,71 @@
         <a href="https://www.linkedin.com/in/tharunkumartallapalli/" target="_blank" class="linkedin"><i class="fa fa-linkedin"></i></a>
         </div>
     </div>
-    </section>
+    </section> -->
 
+    <!--==========================
+    Navigation Bar
+    ============================-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <a class="navbar-brand" href="/">Home</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse SearchBar" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+    
+          <!-- <li class="nav-item active">
+            <a class="nav-link" href="/cleanrepo" target="_self" rel="noopener noreferrer">Repository</a> -->
+    
+    
+    
+            <li class="nav-item active">
+            <a class="nav-link" href="/analyhome" target="_self" rel="noopener noreferrer">Analytics</a>
+          </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="/contact" target="_self" rel="noopener noreferrer">Contact -us</a>
+          </li>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <li>
+        <form class="form-inline" action="{{ url_for('predict')}}" method="GET">
+        <input class="form-control mr-sm-2 SearchBar" type="text" id="tags" name="search" placeholder="Search for recommendation" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        </li>
+    
+    
+    
+        </ul>
+        <!-- <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form> -->
+    </div>
+    </nav>
+
+    <!--==========================
+    Body
+    ============================-->
+    
+    <h1>Battery Prediction</h1>
+    <p>Select battery to predict from the dropdown below</p>
+    
+    <form action="{{ url_for('predict')}}">
+        <label for="battery">Choose a battery:</label>
+        <select name="battery" id="battery">
+          <option value="RW7">RW7</option>
+          <option value="RW1">RW1</option>
+          <option value="RW2">RW2</option>
+          <option value="RW3">RW3</option>
+        </select>
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <p>Click the "Submit" button and the form-data will be sent to a page on the 
+    server called "action_page.php".</p>
 
     <!-- JavaScript Libraries -->
     <script src="../static/lib/jquery/jquery.min.js"></script>
