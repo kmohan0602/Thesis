@@ -2,6 +2,8 @@ import os
 import uuid
 import sys
 import time
+import pandas as pd
+import shutil
 # from azure.storage.blob import BlockBlobService, PublicAccess
 from azure.storage.blob import BlobServiceClient, PublicAccess
 
@@ -73,13 +75,74 @@ def sendNextSessionData(blob_service_client, container_name):
 
     print('Upload Complete')
 
+def gatherFilesToSend(sessionnum):
+    ## remove folder
+    # try:
+    #     os.rmdir('./ForSessionTraining')
+    # except OSError as error:
+    #     print(error)
+    shutil.rmtree('./ForSessionTraining')
+
+    path = './ForSessionTraining'
+    soh_values_dir = os.path.join(path, 'soh_values_oct12')
+    images_dir = os.path.join(path, 'subset_image_files_oct12_20cycles')
+
+    try: 
+        os.mkdir(path) 
+    except OSError as error: 
+        print(error)
+    
+    try: 
+        os.mkdir(soh_values_dir) 
+    except OSError as error: 
+        print(error)  
+
+    try: 
+        os.mkdir(images_dir) 
+        bat_dir = os.path.join(images_dir,'RW7')
+        os.mkdir(bat_dir)
+        os.mkdir(os.path.join(bat_dir, 'wavelet_images'))
+    except OSError as error: 
+        print(error)  
+
+    df = pd.read_csv('./Database/subset_image_files_oct12_20cycles/test_file_soh_multi_input.csv')
+    file_len = len(df)
+    partition = file_len // 10
+    if sessionnum == 9:
+        df = df[sessionnum*partition : ]
+    else:
+        df = df[sessionnum*partition : (sessionnum+1)*partition]
+
+    # print(df)
+    src_path = './Database/subset_image_files_oct12_20cycles/RW7/wavelet_images/'
+    dest_path = './ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/'
+    for idx in range(len(df)):
+        voltage_img_filename = df.loc[idx+partition*sessionnum, 'voltage_filenames']
+        current_img_filename = df.loc[idx+partition*sessionnum, 'current_filenames']
+
+        voltage_img_filename = voltage_img_filename.split('/')[-1]
+        current_img_filename = current_img_filename.split('/')[-1]
+
+        # print(voltage_img_filename)
+        # print(current_img_filename)
+
+        # src_path
+        shutil.copyfile(src_path+voltage_img_filename, dest_path+voltage_img_filename)
+        shutil.copyfile(src_path+current_img_filename, dest_path+current_img_filename)
+
+    df = df.reset_index()
+    print(df)
+    df.to_csv('./ForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
+
+    
 
 def send_data(blob_service_client, container_name):
     
-    for i in range(2):
+    for i in range(10):
         print('Running Iteration num -- ', i)
         checkAndDeleteData(blob_service_client, container_name)
-        Delay(60)
+        Delay(30)
+        gatherFilesToSend(i)
         sendNextSessionData(blob_service_client, container_name)
 
         Delay(60*15)
@@ -193,6 +256,7 @@ if __name__ == '__main__':
 
     send_data(blob_service_client, container_name)
 
+    # gatherFilesToSend(0)
 
 
         
