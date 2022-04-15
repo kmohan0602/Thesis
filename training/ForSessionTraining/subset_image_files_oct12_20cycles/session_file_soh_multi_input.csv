@@ -1,6 +1,0 @@
-,index,Unnamed: 0,voltage_filenames,current_filenames,soh_values
-0,10,10,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_200_220_voltage.png,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_200_220_current.png,1.7621089928888491
-1,11,11,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_220_240_voltage.png,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_220_240_current.png,1.7393899528888703
-2,12,12,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_240_260_voltage.png,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_240_260_current.png,1.7141348989444445
-3,13,13,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_260_280_voltage.png,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_260_280_current.png,1.6750470416666718
-4,14,14,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_280_300_voltage.png,./../training/ForSessionTraining/subset_image_files_oct12_20cycles/RW7/wavelet_images/RW7_280_300_current.png,1.6338842638888973
