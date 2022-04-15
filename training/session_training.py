@@ -123,8 +123,8 @@ def session_data_init():
 def session_train_process():
 
     # generate_avg_soh_values(config.session_bat_names)
-    # session_generate_filename_soh_pair(config.session_bat_names,
-    #                             config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
+    session_generate_filename_soh_pair(config.session_bat_names,
+                                config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv')
 
     # session_data = SessionDataset(config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',0,config.transform)
 

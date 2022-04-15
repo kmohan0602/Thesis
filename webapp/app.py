@@ -1,7 +1,14 @@
 import numpy as np
 import pandas as pd
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, make_response
 # import pickle
+import socket
+import encodings
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import io
+from datetime import datetime
 
 import os
 import sys
@@ -28,6 +35,10 @@ from functions import predict_helper
 # from training.config import transform
 from config import transform
 
+HOST = '127.0.0.1'
+PORT = 65432
+
+global soh_output
 
 app = Flask(__name__, template_folder='templates')
 # model = pickle.load(open('../outputs/azure_devops_test.pkl', 'rb'))
@@ -37,7 +48,12 @@ app = Flask(__name__, template_folder='templates')
 @app.route('/')
 def home():
     # device = torch.device('cpu')
-    return render_template('index.html')
+    template_data = {
+        'soh' : 0,
+        'soc' : 0,
+        'time' : 0
+    }
+    return render_template('index.html', **template_data)
 
 @app.route('/predict',methods = ['POST','GET'])
 def predict():
@@ -54,8 +70,8 @@ def predict():
     # return render_template('home.html', prediction_text="AQI for Jaipur {}".format(prediction[0]))
 
     predict_generate_filename_soh_pair(bat_name,
-                            '../training/ForSessionTraining/subset_image_files_oct12_20cycles/test_file_soh_multi_input.csv')
-    test_data = CustomDataset('../training/ForSessionTraining/subset_image_files_oct12_20cycles/test_file_soh_multi_input.csv',
+                            '../training/ForWebApp/subset_image_files_oct12_20cycles/test_file_soh_multi_input.csv')
+    test_data = CustomDataset('../training/ForWebApp/subset_image_files_oct12_20cycles/test_file_soh_multi_input.csv',
                                  transform)
     testdataloader = DataLoader(test_data, batch_size =1, shuffle=False)
 
@@ -63,9 +79,96 @@ def predict():
     model_path = '../outputs/FSLL_march2_pretrain_set_9_10_11_finetune_rw1.pkl'
     model_multi_input = torch.load(model_path, map_location=torch.device(device))
 
-    predict_helper(model_multi_input, testdataloader)
+    soh_output = predict_helper(model_multi_input, testdataloader)
+    print(soh_output)
+    plt.plot(soh_output)
+    plt.savefig('./static/images/soh_plot.png')
 
-    return render_template('index.html')
+    ## add code for graph
+
+
+    ## get data from bms
+    ## send soh value
+    soh_value = 90
+    soh_value = soh_output[-1]
+    soc_value = 20
+    soc_value  = run_websocket_server(soh_value)
+    print('SOC value -- ', soc_value)
+
+
+    now = datetime.now()
+    time = now.strftime("%m/%d/%Y, %H:%M:%S")
+    
+    template_data = {
+        'soh_value' : soh_value,
+        'soc_value' : soc_value,
+        'time' : time,
+        'url' : './static/images/soh_plot.png'
+    }
+
+
+    return render_template('index.html', **template_data)
+
+
+@app.route('/plot/SOH')
+def plot_soh():
+    # predictions = get_data()
+    predictions = soh_output
+    print('Predictions')
+    print(predictions)
+    ys = predictions
+    fig = Figure()
+    axis = fig.add_subplot(1,1,1)
+    axis.set_title("Battery SOH in Ah")
+    axis.set_xlabel('Cycles')
+    axis.set_ylabel('Ah')
+    axis.grid(True)
+    xs = range(len(predictions))
+    axis.plot(xs, ys)
+    canvas = FigureCanvas(fig)
+    output = io.BytesIO()
+    canvas.print_png(output)
+    response = make_response(output.getvalue())
+    response.mimetype = 'image/png'
+    return response
+
+
+def run_websocket_server(soh_value):
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        print("Server Started waiting for client to connect")
+        s.bind((HOST, PORT))
+        s.listen(5)
+        conn, addr = s.accept()
+
+        # print(conn)
+        # print(addr)
+
+        with conn:
+            print('Connected by', addr)
+            while True:
+                print('Receiving SOC value')
+                data = conn.recv(1024).decode('utf-8')
+
+                print('Sending SOH value')
+                if str(data)=="Data":
+                    print("Ok Sending Data")
+
+                    soh_value = str(soh_value)
+                    soh_value_encoded = soh_value.encode('utf-8')
+
+                    conn.sendall(soh_value_encoded)
+
+                elif str(data) == "Quit":
+                    print("Shutting Server")
+                    break
+                    
+                if not data:
+                    break
+                else:
+                    pass
+
+    return data
 
 
 ## Dataset Class

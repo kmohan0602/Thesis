@@ -98,10 +98,11 @@
     Body
     ============================-->
     
-    <h1>Battery Prediction</h1>
-    <p>Select battery to predict from the dropdown below</p>
+    <h1 style="text-align:center">Battery Prediction</h1>
+    <h2 style="text-align:center">Total Batteries Online : {{10}}</h2>
+    <p style="text-align:center">Select battery to predict from the dropdown below</p>
     
-    <form action="{{ url_for('predict')}}">
+    <form action="{{ url_for('predict')}}" style="text-align:center">
         <label for="battery">Choose a battery:</label>
         <select name="battery" id="battery">
           <option value="RW7">RW7</option>
@@ -109,12 +110,55 @@
           <option value="RW2">RW2</option>
           <option value="RW3">RW3</option>
         </select>
-        <br><br>
+        <!-- <br><br> -->
         <input type="submit" value="Submit">
     </form>
 
     <p>Click the "Submit" button and the form-data will be sent to a page on the 
     server called "action_page.php".</p>
+
+    <div id="g1" style="align:left"></div>
+    <div id="g2"></div>
+
+    <img src={{url}} alt="Image Placeholder" width="49%">
+	  <!-- <img src="/plot/hum" alt="Image Placeholder" width="49%"> -->
+
+    <hr>
+    <h3 style="text-align:center">Last Sensors Reading: {{time}} ==> <a href="/" class ="button">REFRESH</a></h3>
+    <hr>
+
+    <p>@2022 Developed by Krishna@IOT Lab</p>
+
+    <script src="../static/raphael-2.1.4.min.js"></script>
+    <script src="../static/justgage.js"></script>
+
+    <script>
+      var g1, g2;
+      document.addEventListener("DOMContentLoaded", function(event)
+      {
+        g1 = new JustGage({
+                id: "g1",
+                value: {{soh_value}},
+                valueFontColor: "blue",
+                min: -10,
+                max: 50,
+                title: "SOH",
+                label: "Ah"
+        });
+
+        g2 = new JustGage({
+                id: "g2",
+                value: {{soc_value}},
+                valueFontColor: "blue",
+                min: 0,
+                max: 100,
+                title: "SOC",
+                label: "%"
+        });
+      });
+    </script>
+
+
 
     <!-- JavaScript Libraries -->
     <script src="../static/lib/jquery/jquery.min.js"></script>

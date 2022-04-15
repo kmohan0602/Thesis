@@ -50,3 +50,5 @@ def predict_helper(model, testdataloader):
         
     print('mean square error -- ',mse)
     print('mean absolute percentage error -- ',mape)
+
+    return predictions
