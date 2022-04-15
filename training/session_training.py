@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import torch
 import torchvision
 import torch.nn as nn
@@ -96,7 +97,8 @@ def main():
     session_data_init()
     print('Data Download Complete')
 
-    os.rename('%2FForSessionTraining', 'ForSessionTraining')    
+    # os.rename('%2FForSessionTraining', 'ForSessionTraining')    
+    shutil.copytree('%2FForSessionTraining', 'ForSessionTraining')
 
     ## call session train process
     session_train_process()
@@ -131,7 +133,8 @@ def session_train_process():
 
     # session_data = SessionDataset(config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',0,config.transform)
 
-    session_data = CustomDataset(config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',config.transform)
+    # session_data = CustomDataset(config.base_path + '%2FForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',config.transform)
+    session_data = CustomDataset(config.base_path + 'ForSessionTraining/subset_image_files_oct12_20cycles/session_file_soh_multi_input.csv',config.transform)
 
     session_dataloader = DataLoader(session_data, batch_size=32, shuffle=False)
 
